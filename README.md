@@ -20,5 +20,10 @@ active engagement in the cocreation of the informational/geographic/social lands
 - How dow these factors relate to your identities or sense of self? (e.g., if you factor in street harassment, how does that relate to your gender identity?)
 - If you were to assign these factors as costs, just like distance or time, how would you quantify them? How would you rank their relative importance?
 - What is an optimal route? What do you optimize for? What would a route look like if we optimized for something else?
+- When deciding on where to go as a group, how do you all decide on your destination and route? What values are prioritized? Who holds those values close? (e.g., does your group take an Uber, the bus, or bike? Do you detour through the park? Take streets with broader sidewalks? Avoid that one doorway with the permanently angry character?)
 - Do you use an app to route you through the city? When did you start using it? How has the way you traveled through the city changed?
 - What possible other experiences can someone miss out on by only ever taking the recommended route?
+
+## Instructions
+- By yourself
+- With somebody else
