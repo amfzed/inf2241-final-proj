@@ -1,12 +1,24 @@
+import de.fhpotsdam.unfolding.*;
+import de.fhpotsdam.unfolding.geo.*;
+import de.fhpotsdam.unfolding.utils.*; 
+import de.fhpotsdam.unfolding.providers.AbstractMapProvider;
+import de.fhpotsdam.unfolding.providers.Microsoft;
+
 import processing.serial.*;
 
+// map setup
+UnfoldingMap map;
+AbstractMapProvider p1;
+AbstractMapProvider p2;
+
+// Serial listener setup
 Serial myPort;  // Create object from Serial class
-String val = "0";     // Data received from the serial port
+String values = "0, 0, 0";  // Set up string to hold potentiometer values
+float wt1 = 0;  // first value
+float wt2 = 0;  // second value
+float wt3 = 0;  // third value
 
-float redValue = 0;        // red value
-float greenValue = 255;      // green value
-float blueValue = 255;       // blue value
-
+// some dummy cost matrices
 int[][] costDist = {  {10, 1, 2, 3}, 
   {3, 2, 1, 10}, 
   {3, 5, 6, 1}, 
@@ -17,6 +29,7 @@ int[][] costX = {  {1000, 5000, 1000, 3000},
   {5000, 0, 900, 0}, 
   {1250, 8000, 2000, 2000}  };
 
+// start and endpoints
 int startNode = 0;
 int endNode = 1;
 
@@ -29,33 +42,52 @@ void setup()
   // Open whatever port is the one you're using.
   String portName = Serial.list()[0]; //change the 0 to a 1 or 2 etc. to match your port
   myPort = new Serial(this, portName, 115200);
-  //size(500,500);
+  size(1000, 800);
+
+  // map setup
+  p1 = new Microsoft.AerialProvider();
+  p2 = new Microsoft.RoadProvider();
+  map = new UnfoldingMap(this, p2);
+  MapUtils.createDefaultEventDispatcher(this);
+  map.zoomAndPanTo(new Location(43.664414, -79.4000), 18);
 }
 
 void draw()
 {
-  //background(redValue, greenValue, blueValue);
+ // map.draw();
+
   if ( myPort.available() > 0) 
   {  // If data is available,
-    val = myPort.readStringUntil('\n');         // read it and store it in val
+    values = myPort.readStringUntil('\n');   // read it and store it in val
   }
+  
+  // if values are coming in, process them
+  if (values != null) {
+    println(values);
+    values = trim(values);
 
-  if (val != null) {
-    // if there is a value, do all this
-    float color_val = float(val);
-    redValue = map(color_val, 0, 1023, 0, 255);
-    println(color_val); //print it out in the console
-    float costA = costDist[startNode][endNode] * redValue;
-    println(costA);
-    float costB = costX[startNode][endNode] * (2 / redValue);
-    println(costB);
-    float lowest;
-    if (costA < costB) {
-      lowest = costA;
-      println("costA is lower");
-    } else {
-      lowest = costB;
-      println("costB is lower");
+    // split the string, convert results into integer array
+    float[] weights = float(split(values, ","));
+    if (weights.length >= 3) {
+      wt1 = map(weights[0], 0, 1023, 0, 255);
+      wt2 = map(weights[1], 0, 1023, 0, 255);
+      wt3 = map(weights[2], 0, 1023, 0, 255);
+      float costA = costDist[startNode][endNode] * wt1;
+      println(costA);
+      float costB = costX[startNode][endNode] * (2/wt2);
+      println(costB);
+      if (costA < costB) {
+        println("costA is lower");
+        //if (map.mapDisplay.getMapProvider() == p2)
+        //{      
+        //  map.mapDisplay.setProvider(p1);
+        //}
+      } else {
+        println("costB is lower");
+        //if (map.mapDisplay.getMapProvider() == p1) {
+        //  map.mapDisplay.setProvider(p2);
+        //}
+      }
     }
   }
 }
