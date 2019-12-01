@@ -34,7 +34,8 @@ float heuristic(Node a, Node b) {
   float valAvg = (a.val + b.val)/2;
   if (arduino == true) {
     println("Arduino detected");
-    //d = (d * wt1) + (valAvg * wt2);
+    d = (d * wt1);
+    valAvg = (valAvg * wt2);
   }
   return d + valAvg;
 }
@@ -115,7 +116,7 @@ void serialEvent(Serial myPort) {
   }
 
   if (arduino == true && values != null) {
-    //println(values);
+    println(values);
     values = trim(values);
 
     float[] weights = float(split(values, ","));
@@ -128,6 +129,7 @@ void serialEvent(Serial myPort) {
 }
 
 void draw() {
+  delay(1000);
   background(255);
 
   //draw links and nodes
@@ -160,13 +162,15 @@ void draw() {
         path.add(origin.parent);
         origin = origin.parent;
       }
-      print(path);
+      println(" All done");
     } else {
       // if you're not done yet
       openSet.remove(current);
       closedSet.add(current);
 
+      println(current.neighbors);
       for (Node neighbor : current.neighbors) {
+        println(neighbor.name);
         if (!closedSet.contains(neighbor)) {
           // MODIFY THIS FOR THE PROJECT
           float tempG = current.g + heuristic(neighbor, current);
@@ -210,14 +214,32 @@ void draw() {
   arduino = false;
 }
 
-void mouseClicked() {
-  //on mouseclick, rerun
+void reset() {
   arduino = false;
   openSet.clear();
   closedSet.clear();
   path.clear();
-  for (Node n : nodes) {n.rerollVal();}
+
+  wt1 = 1;
+  wt2 = 1;
+  wt3 = 1;
+
+  for (Node n : nodes) {
+    n.resetVars();
+    //n.rerollVal();
+  }
+  
+  start = nodes.get(int(random(nodes.size())));
+  println(start.name);
   openSet.add(start);
+}
+
+void mouseClicked() {
+  //on mouseclick, rerun
+  for (Node n : nodes) {
+    Node newNode = n.listen();
+  }
+  reset();
   println("clicked!");
   loop();
 }
@@ -275,16 +297,31 @@ class Node {
       fill(0);
       textAlign(CENTER, CENTER);
       text(name, px, py-22);
-      start = this;
     }
   } // method
+
+  Node listen() {
+    //nothing for now
+    if (dist(mouseX, mouseY, px, py)<=10) {
+      // show the name of the node 
+      println(name);
+      return this;
+    }
+    return null;
+  }
 
   void addNeighbor(Node n) {
     this.neighbors.add(n);
   }
-  
+
   void rerollVal() {
-    val = random(0, maxVal); 
+    val = random(0, maxVal);
+  }
+  
+  void resetVars() {
+    g = 0;
+    heuristic = 0;
+    parent = null;
   }
 
   float f() {
