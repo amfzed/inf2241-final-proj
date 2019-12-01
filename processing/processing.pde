@@ -216,6 +216,7 @@ void mouseClicked() {
   openSet.clear();
   closedSet.clear();
   path.clear();
+  for (Node n : nodes) {n.rerollVal();}
   openSet.add(start);
   println("clicked!");
   loop();
@@ -230,6 +231,7 @@ class Node {
   color c;
   ArrayList<Node> neighbors;
   Node parent;
+  int maxVal = 400;
 
   float heuristic = 0;
   float g = 0;
@@ -240,7 +242,7 @@ class Node {
     px=px_;
     py=py_;
     name=name_;
-    val = random(0, 400);
+    val = random(0, maxVal);
     c=color(random(255), random(255), random(255));
     this.neighbors = new ArrayList<Node>();
   } // constr
@@ -279,6 +281,10 @@ class Node {
 
   void addNeighbor(Node n) {
     this.neighbors.add(n);
+  }
+  
+  void rerollVal() {
+    val = random(0, maxVal); 
   }
 
   float f() {
