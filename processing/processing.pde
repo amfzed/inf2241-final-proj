@@ -1,12 +1,12 @@
 import processing.serial.*;
 
 // arduino stuff
-boolean arduino = false;
+boolean arduino;
 Serial myPort;
 String values; //to hold potentiometer values
-float wt1 = 0;
-float wt2 = 0;
-float wt3 = 0;
+float wt1;
+float wt2;
+float wt3;
 
 // network stuff
 ArrayList<Node> nodes = new ArrayList();
@@ -15,25 +15,28 @@ ArrayList<Node> openSet = new ArrayList();
 ArrayList<Node> closedSet = new ArrayList();
 ArrayList<Node> path = new ArrayList();
 
+// nodes
+Node doverbloor;
+Node doverhep;
+Node ozbloor;
+Node ozhep;
+Node ozcollege;
+Node dovercollege;
+Node duffcollege;
 
-Node doverbloor = new Node("Dovercourt/Bloor", 200, 100);
-Node doverhep = new Node("Dovercourt/Hepbourne", 200, 130);
-Node ozbloor = new Node("Ossington/Bloor", 300, 100);
-Node ozhep = new Node("Ossington/Hepbourne", 300, 170);
-Node ozcollege = new Node("Ossington/College", 300, 300);
-Node dovercollege =  new Node("Dovercourt/College", 200, 300);
-Node duffcollege =  new Node("Dufferin/College", 50, 300);
-
+// start and endpoints
 Node start;
 Node end;
 
 // set up heuristic function for astar
 float heuristic(Node a, Node b) {
   float d = dist(a.px, a.py, b.px, b.py);
+  float valAvg = (a.val + b.val)/2;
   if (arduino == true) {
     println("Arduino detected");
+    //d = (d * wt1) + (valAvg * wt2);
   }
-  return d;
+  return d + valAvg;
 }
 
 void linkNodes(Node a, Node b) {
@@ -56,15 +59,29 @@ void linkNodes(Node a, Node b) {
 
 void setup() {
   size(1200, 600);
+  frameRate(10);
 
+  arduino = false;
   // init arduino listener, if one is connected
   if (Serial.list().length > 0) {
     String portName = Serial.list()[0];
     myPort = new Serial(this, portName, 115200);
   }
 
+  // starting weights
+  wt1 = 1;
+  wt2 = 1;
+  wt3 = 1;
 
   // init nodes 
+  doverbloor = new Node("Dovercourt/Bloor", 200, 100);
+  doverhep = new Node("Dovercourt/Hepbourne", 200, 130);
+  ozbloor = new Node("Ossington/Bloor", 300, 100);
+  ozhep = new Node("Ossington/Hepbourne", 300, 170);
+  ozcollege = new Node("Ossington/College", 300, 300);
+  dovercollege =  new Node("Dovercourt/College", 200, 300);
+  duffcollege =  new Node("Dufferin/College", 50, 300);
+
   // street nodes
   nodes.add(doverbloor);
   nodes.add(doverhep);
@@ -77,17 +94,12 @@ void setup() {
   //add neighbors
   linkNodes(ozcollege, dovercollege);
   linkNodes(ozcollege, ozhep);
-
   linkNodes(ozbloor, doverbloor);
   linkNodes(ozbloor, ozhep);
   linkNodes(ozhep, doverhep);
   linkNodes(doverbloor, doverhep);
   linkNodes(doverhep, dovercollege);
-
   linkNodes(duffcollege, dovercollege);
-
-  // ----------------------
-
 
   start = doverbloor;
   end = ozcollege;
@@ -198,13 +210,23 @@ void draw() {
   arduino = false;
 }
 
+void mouseClicked() {
+  //on mouseclick, rerun
+  arduino = false;
+  openSet.clear();
+  closedSet.clear();
+  path.clear();
+  openSet.add(start);
+  println("clicked!");
+  loop();
+}
 
 // =============================================
 
 class Node {
 
   String name;
-  float px, py;
+  float px, py, val;
   color c;
   ArrayList<Node> neighbors;
   Node parent;
@@ -212,12 +234,24 @@ class Node {
   float heuristic = 0;
   float g = 0;
 
-  // constr
+  // constructor 1
   Node(String name_, 
     float px_, float py_) {
     px=px_;
     py=py_;
     name=name_;
+    val = random(0, 400);
+    c=color(random(255), random(255), random(255));
+    this.neighbors = new ArrayList<Node>();
+  } // constr
+
+  // constructor -- extra var
+  Node(String name_, 
+    float px_, float py_, float val_) {
+    px=px_;
+    py=py_;
+    name=name_;
+    val = val_;
     c=color(random(255), random(255), random(255));
     this.neighbors = new ArrayList<Node>();
   } // constr
@@ -248,7 +282,7 @@ class Node {
   }
 
   float f() {
-    return heuristic + g;
+    return heuristic + g + val;
   }
 } // class
 
@@ -285,10 +319,5 @@ class Link {
     fill(0);
     textAlign(CENTER, CENTER);
     text(name, ((px1+px2)/2)-25, ((py1+py2)/2)-12);
-  } // method
-
-  void mousePressed() {
-    println("HI");
-  }
+  } // draw method
 } // class 
-//
