@@ -123,9 +123,23 @@ void serialEvent(Serial myPort) {
 
     float[] weights = float(split(values, ","));
     if (weights.length == 3) {
-      wt1 = map(weights[0], 0, 1023, 0, 100);
-      wt2 = map(weights[1], 0, 1023, 0, 100);
-      wt3 = map(weights[2], 0, 1023, 0, 100);
+      if (weights[0] <= 100) {
+        wt1 = 0;
+      } else {
+        wt1 = map(weights[0], 0, 1023, 0, 10);
+      }
+
+      if (weights[1] <= 100) {
+        wt2 = 0;
+      } else {
+        wt2 = map(weights[1], 0, 1023, 0, 10);
+      }
+
+      if (weights[2] <= 100) {
+        wt3 = 0;
+      } else {
+        wt3 = map(weights[2], 0, 1023, 0, 10);
+      }
     }
   }
 }
@@ -230,7 +244,7 @@ void reset() {
     n.resetVars();
     //n.rerollVal();
   }
-  
+
   start = nodes.get(int(random(nodes.size())));
   println(start.name);
   openSet.add(start);
@@ -284,7 +298,7 @@ class Node {
     c=color(random(255), random(255), random(255));
     this.neighbors = new ArrayList<Node>();
   } // constr
-  
+
   // constructor -- val and rand specified
   Node(String name_, 
     float px_, float py_, float val_, float rand_) {
@@ -335,7 +349,7 @@ class Node {
   void rerollVal() {
     val = random(0, maxVal);
   }
-  
+
   void resetVars() {
     g = 0;
     heuristic = 0;
