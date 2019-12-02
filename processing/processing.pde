@@ -32,12 +32,14 @@ Node end;
 float heuristic(Node a, Node b) {
   float d = dist(a.px, a.py, b.px, b.py);
   float valAvg = (a.val + b.val)/2;
+  float randAvg = (a.rand + b.rand)/2;
   if (arduino == true) {
     println("Arduino detected");
     d = (d * wt1);
     valAvg = (valAvg * wt2);
+    randAvg = randAvg * wt3;
   }
-  return d + valAvg;
+  return d + valAvg + randAvg;
 }
 
 void linkNodes(Node a, Node b) {
@@ -249,11 +251,12 @@ void mouseClicked() {
 class Node {
 
   String name;
-  float px, py, val;
+  float px, py, val, rand;
   color c;
   ArrayList<Node> neighbors;
   Node parent;
   int maxVal = 400;
+  int maxRand = 200;
 
   float heuristic = 0;
   float g = 0;
@@ -265,17 +268,32 @@ class Node {
     py=py_;
     name=name_;
     val = random(0, maxVal);
+    rand = random(0, maxRand);
     c=color(random(255), random(255), random(255));
     this.neighbors = new ArrayList<Node>();
   } // constr
 
-  // constructor -- extra var
+  // constructor -- extra val specified
   Node(String name_, 
     float px_, float py_, float val_) {
     px=px_;
     py=py_;
     name=name_;
     val = val_;
+    rand = random(0, maxRand);
+    c=color(random(255), random(255), random(255));
+    this.neighbors = new ArrayList<Node>();
+  } // constr
+  
+  // constructor -- val and rand specified
+  Node(String name_, 
+    float px_, float py_, float val_, float rand_) {
+    px=px_;
+    py=py_;
+    name=name_;
+    val = val_;
+    rand = rand_;
+    rand = random(0, maxRand);
     c=color(random(255), random(255), random(255));
     this.neighbors = new ArrayList<Node>();
   } // constr
