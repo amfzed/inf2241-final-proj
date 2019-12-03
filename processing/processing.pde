@@ -206,7 +206,7 @@ void serialEvent(Serial myPort) {
 }
 
 void draw() {
-  delay(1000);
+  delay(750);
   background(bg);
   //draw links and nodes
   for (Link l : links) {
@@ -305,7 +305,7 @@ void reset() {
     //n.rerollVal();
   }
 
-  start = nodes.get(int(random(nodes.size())));
+ // start = nodes.get(int(random(nodes.size())));
   println(start.name);
   openSet.add(start);
 }
