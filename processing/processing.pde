@@ -95,7 +95,7 @@ void linkNodes(Node a, Node b) {
 
 void setup() {
   size(1200, 1000);
-  frameRate(10);
+  //frameRate(20);
   bg = loadImage("basemap.png");
 
   arduino = false;
@@ -111,43 +111,43 @@ void setup() {
   wt3 = 1;
 
   // init nodes 
-  Node bwaystate = new Node("Broadway/State", 531, 428);
-  Node bwayfork = new Node("Broadway/Broadway", 608, 297);
-  Node bwaymorris = new Node("Broadway/Morris", 617, 273);
+  Node bwaystate = new Node("Broadway/State", 531, 428, 500);
+  Node bwayfork = new Node("Broadway/Broadway", 608, 297, 500);
+  Node bwaymorris = new Node("Broadway/Morris", 617, 273, 500);
   Node bwayxchange = new Node("Broadway/Exchange", 687, 157);
-  Node bwaywall = new Node("Broadway/Wall", 761, 43);
+  Node bwaywall = new Node("Broadway/Wall", 761, 43, 600);
   Node bwaybeaver = new Node("Broadway/Beaver", 615, 374);
-  Node bwaystone = new Node("Broadway/Stone", 625, 496);
-  Node stonebroad = new Node("Stone/Broad", 776, 497);
-  Node broadswilliam = new Node("Broad/S.William", 776, 469);
-  Node beavernewmktfield = new Node("Beaver/New", 680, 374);
+  Node bwaystone = new Node("Broadway/Stone", 625, 496, 50, 50);
+  Node stonebroad = new Node("Stone/Broad", 776, 497, 50, 50);
+  Node broadswilliam = new Node("Broad/S.William", 776, 469, 100, 100);
+  Node beavernewmktfield = new Node("Beaver/New", 680, 374, 50, 50);
   Node beaverbroad = new Node("Beaver/Broad", 779, 377);
   Node newxchange = new Node("New/Exchange", 747, 187);
   Node broadxchange = new Node("Broad/Exchange", 812, 221);
-  Node newwall = new Node("New/Wall", 807, 70);
-  Node mktbroad = new Node("Marketfield/Broad", 775, 415);
-  Node mktdogleg = new Node("Marketfield/MarketField", 685, 416);
-  Node wallbroad = new Node("Broad/Wall", 858, 113);
-  Node swilliamalley = new Node("S.William/Coenties", 840, 445);
-  Node swilliammill = new Node("S.William/Mill", 895, 409);
-  Node beaverswilliam = new Node("Beaver/S.William", 923, 356);
-  Node williamxchange = new Node("William/Exchange", 935, 280);
-  Node wallwilliam = new Node("William/Wall", 968, 208);
-  Node wallhanover = new Node("Hanover/Wall", 1034, 256);
-  Node xchangehanover = new Node("Hanover/Exchange", 1011, 309);
+  Node newwall = new Node("New/Wall", 807, 70, 400);
+  Node mktbroad = new Node("Marketfield/Broad", 775, 415, 50, 50);
+  Node mktdogleg = new Node("Marketfield/MarketField", 685, 416, 1, 1);
+  Node wallbroad = new Node("Broad/Wall", 858, 113, 400);
+  Node swilliamalley = new Node("S.William/Coenties", 840, 445, 1, 1);
+  Node swilliammill = new Node("S.William/Mill", 895, 409, 1, 1);
+  Node beaverswilliam = new Node("Beaver/S.William", 923, 356, 20, 20);
+  Node williamxchange = new Node("William/Exchange", 935, 280, 150);
+  Node wallwilliam = new Node("William/Wall", 968, 208, 300, 150);
+  Node wallhanover = new Node("Hanover/Wall", 1034, 256, 325, 100);
+  Node xchangehanover = new Node("Hanover/Exchange", 1011, 309, 50, 50);
   Node statebridge = new Node("State/Bridge", 514, 547);
   Node statepearl = new Node("State/Pearl", 507, 604);
   Node bwaybridge = new Node("Broadway/Bridge", 632, 553);
   Node whitehallpearl = new Node("Whitehall/Pearl", 642, 605);
-  Node wallpearl = new Node("Wall/Pearl", 1115, 312);
-  Node beaverhanover = new Node("Beaver/Hanover", 1012, 342);
-  Node hanoverpearl = new Node("Hanover/Pearl", 1023, 395);
-  Node williampearl = new Node("William/Pearl", 970, 434);
-  Node williamstone = new Node("William/Stone", 948, 408);
-  Node pearlcoenties = new Node("Pearl/Coenties", 862, 538);
-  Node stonecoenties = new Node("Stone/Coenties", 857, 484);
+  Node wallpearl = new Node("Wall/Pearl", 1115, 312, 200);
+  Node beaverhanover = new Node("Beaver/Hanover", 1012, 342, 50, 50);
+  Node hanoverpearl = new Node("Hanover/Pearl", 1023, 395, 50, 50);
+  Node williampearl = new Node("William/Pearl", 970, 434, 150);
+  Node williamstone = new Node("William/Stone", 948, 408, 50, 50);
+  Node pearlcoenties = new Node("Pearl/Coenties", 862, 538, 1, 1);
+  Node stonecoenties = new Node("Stone/Coenties", 857, 484, 1, 1);
   Node broadpearl = new Node("Broad/Pearl", 773, 564);
-  Node millstone = new Node("Mill/Stone", 915, 431);
+  Node millstone = new Node("Mill/Stone", 915, 431, 1, 1);
 
   // street nodes
   nodes.add(bwaystate);
@@ -249,10 +249,10 @@ void setup() {
   linkNodes(swilliammill, millstone);
   linkNodes(millstone, williamstone);
   linkNodes(millstone, stonecoenties);
-  
 
-  start = bwayfork;
-  end = wallpearl;
+
+  start = bwaywall;
+  end = pearlcoenties;
 
   openSet.add(start);
 }
@@ -282,7 +282,7 @@ void serialEvent(Serial myPort) {
         wt2 = map(weights[1], 0, 1023, 0, 10);
       }
 
-      if (weights[2] <= 100  || Float.isNaN(weights[2])) {
+      if (weights[2] <= 150  || Float.isNaN(weights[2])) {
         wt3 = 0;
       } else {
         wt3 = map(weights[2], 0, 1023, 0, 10);
@@ -332,6 +332,9 @@ void draw() {
         origin = origin.parent;
       }
       println(" All done");
+      textSize(32);
+      fill(255, 150, 150);
+      text("Destination reached", 500, 950);
     } else {
       // if you're not done yet
       openSet.remove(current);
@@ -431,7 +434,7 @@ class Node {
     name=name_;
     val = random(0, maxVal);
     rand = random(0, maxRand);
-    c=color(random(255), random(255), random(255));
+    c=color(50, 50, 50);
     this.neighbors = new ArrayList<Node>();
   } // constr
 
@@ -443,7 +446,7 @@ class Node {
     name=name_;
     val = val_;
     rand = random(0, maxRand);
-    c=color(random(255), random(255), random(255));
+    c=color(50, 50, 50);
     this.neighbors = new ArrayList<Node>();
   } // constr
 
@@ -456,7 +459,7 @@ class Node {
     val = val_;
     rand = rand_;
     rand = random(0, maxRand);
-    c=color(random(255), random(255), random(255));
+    c=color(50, 50, 50);
     this.neighbors = new ArrayList<Node>();
   } // constr
 
