@@ -8,6 +8,9 @@ float wt1;
 float wt2;
 float wt3;
 
+// map stuff
+PImage bg;
+
 // network stuff
 ArrayList<Node> nodes = new ArrayList();
 ArrayList<Link> links = new ArrayList();
@@ -16,13 +19,26 @@ ArrayList<Node> closedSet = new ArrayList();
 ArrayList<Node> path = new ArrayList();
 
 // nodes
-Node doverbloor;
-Node doverhep;
-Node ozbloor;
-Node ozhep;
-Node ozcollege;
-Node dovercollege;
-Node duffcollege;
+Node bwaystate; //"Broadway/State", 531, 428
+Node bwayfork; //"Broadway/Broadway", 608, 297
+Node bwaymorris;
+Node bwayxchange; // "Broadway/Exchange", 687, 157
+Node bwaywall; //"Broadway/Wall", 761, 43
+Node bwaybeaver; //"Broadway/Beaver", 615, 374
+Node bwaystone; //"Broadway/Stone", 625, 496
+Node stonebroad; //"Stone/Broad", 776, 497
+Node broadswilliam; //"Broad/S.William", 781, 469
+Node beavernewmktfield; //"Beaver/New/Marketfield", 680, 374
+Node beaverbroad; //"Beaver/Broad", 779, 377
+Node newxchange; //"New/Exchange", 747, 187
+Node broadxchange; //"Broad/Exchange", 812, 221
+Node newwall; 
+Node mktbroad;
+Node mktdogleg;
+Node wallbroad;
+Node swilliamalley;
+Node swilliammill;
+Node beaverswilliam;
 
 // start and endpoints
 Node start;
@@ -61,8 +77,9 @@ void linkNodes(Node a, Node b) {
 }
 
 void setup() {
-  size(1200, 600);
+  size(1200, 1000);
   frameRate(10);
+  bg = loadImage("basemap.png");
 
   arduino = false;
   // init arduino listener, if one is connected
@@ -77,35 +94,79 @@ void setup() {
   wt3 = 1;
 
   // init nodes 
-  doverbloor = new Node("Dovercourt/Bloor", 200, 100);
-  doverhep = new Node("Dovercourt/Hepbourne", 200, 130);
-  ozbloor = new Node("Ossington/Bloor", 300, 100);
-  ozhep = new Node("Ossington/Hepbourne", 300, 170);
-  ozcollege = new Node("Ossington/College", 300, 300);
-  dovercollege =  new Node("Dovercourt/College", 200, 300);
-  duffcollege =  new Node("Dufferin/College", 50, 300);
+  Node bwaystate = new Node("Broadway/State", 531, 428);
+  Node bwayfork = new Node("Broadway/Broadway", 608, 297);
+  Node bwaymorris = new Node("Broadway/Morris", 617, 273);
+  Node bwayxchange = new Node("Broadway/Exchange", 687, 157);
+  Node bwaywall = new Node("Broadway/Wall", 761, 43);
+  Node bwaybeaver = new Node("Broadway/Beaver", 615, 374);
+  Node bwaystone = new Node("Broadway/Stone", 625, 496);
+  Node stonebroad = new Node("Stone/Broad", 776, 497);
+  Node broadswilliam = new Node("Broad/S.William", 776, 469);
+  Node beavernewmktfield = new Node("Beaver/New", 680, 374);
+  Node beaverbroad = new Node("Beaver/Broad", 779, 377);
+  Node newxchange = new Node("New/Exchange", 747, 187);
+  Node broadxchange = new Node("Broad/Exchange", 812, 221);
+  Node newwall = new Node("New/Wall", 807, 70);
+  Node mktbroad = new Node("Marketfield/Broad", 775, 415);
+  Node mktdogleg = new Node("Marketfield/MarketField", 685, 416);
+  Node wallbroad = new Node("Broad/Wall", 858, 113);
+  Node swilliamalley = new Node("S.William/Coenties", 840, 445);
+  Node swilliammill = new Node("S.William/Mill", 895, 409);
+  Node beaverswilliam = new Node("Beaver/S.William", 923, 356);
 
   // street nodes
-  nodes.add(doverbloor);
-  nodes.add(doverhep);
-  nodes.add(ozbloor);
-  nodes.add(ozhep);
-  nodes.add(ozcollege);
-  nodes.add(dovercollege);
-  nodes.add(duffcollege);
+  nodes.add(bwaystate);
+  nodes.add(bwayfork);
+  nodes.add(bwaymorris);
+  nodes.add(bwayxchange);
+  nodes.add(bwaywall);
+  nodes.add(bwaybeaver);
+  nodes.add(bwaystone);
+  nodes.add(stonebroad);
+  nodes.add(broadswilliam);
+  nodes.add(beavernewmktfield);
+  nodes.add(beaverbroad);
+  nodes.add(newxchange);
+  nodes.add(broadxchange);
+  nodes.add(newwall);
+  nodes.add(mktbroad);
+  nodes.add(mktdogleg);
+  nodes.add(wallbroad);
+  nodes.add(swilliamalley);
+  nodes.add(swilliammill);
+  nodes.add(beaverswilliam);
 
   //add neighbors
-  linkNodes(ozcollege, dovercollege);
-  linkNodes(ozcollege, ozhep);
-  linkNodes(ozbloor, doverbloor);
-  linkNodes(ozbloor, ozhep);
-  linkNodes(ozhep, doverhep);
-  linkNodes(doverbloor, doverhep);
-  linkNodes(doverhep, dovercollege);
-  linkNodes(duffcollege, dovercollege);
+  linkNodes(bwaystate, bwayfork);
+  linkNodes(bwayfork, bwaymorris);
+  linkNodes(bwaymorris, bwayxchange);
+  linkNodes(bwayxchange, bwaywall);
+  linkNodes(bwayfork, bwaybeaver);
+  linkNodes(bwaybeaver, beavernewmktfield);
+  linkNodes(beavernewmktfield, beaverbroad);
+  linkNodes(beavernewmktfield, newxchange);
+  linkNodes(beavernewmktfield, mktdogleg);
+  linkNodes(newxchange, broadxchange);
+  linkNodes(newxchange, bwayxchange);
+  linkNodes(broadxchange, beaverbroad);
+  linkNodes(beaverbroad, mktbroad);
+  linkNodes(beaverbroad, beaverswilliam);
+  linkNodes(mktbroad, mktdogleg);
+  linkNodes(mktbroad, broadswilliam);
+  linkNodes(broadswilliam, swilliamalley);
+  linkNodes(broadswilliam, stonebroad);
+  linkNodes(newxchange, newwall);
+  linkNodes(newwall, bwaywall);
+  linkNodes(bwaystone, bwaybeaver);
+  linkNodes(bwaystone, stonebroad);
+  linkNodes(newwall, wallbroad);
+  linkNodes(wallbroad, broadxchange);
+  linkNodes(swilliamalley, swilliammill);
+  linkNodes(swilliammill, beaverswilliam);
 
-  start = doverbloor;
-  end = ozcollege;
+  start = bwayfork;
+  end = newwall;
 
   openSet.add(start);
 }
@@ -123,19 +184,19 @@ void serialEvent(Serial myPort) {
 
     float[] weights = float(split(values, ","));
     if (weights.length == 3) {
-      if (weights[0] <= 100) {
+      if (weights[0] <= 100  || Float.isNaN(weights[0])) {
         wt1 = 0;
       } else {
         wt1 = map(weights[0], 0, 1023, 0, 10);
       }
 
-      if (weights[1] <= 100) {
+      if (weights[1] <= 100  || Float.isNaN(weights[1])) {
         wt2 = 0;
       } else {
         wt2 = map(weights[1], 0, 1023, 0, 10);
       }
 
-      if (weights[2] <= 100) {
+      if (weights[2] <= 100  || Float.isNaN(weights[2])) {
         wt3 = 0;
       } else {
         wt3 = map(weights[2], 0, 1023, 0, 10);
@@ -146,8 +207,7 @@ void serialEvent(Serial myPort) {
 
 void draw() {
   delay(1000);
-  background(255);
-
+  background(bg);
   //draw links and nodes
   for (Link l : links) {
     l.draw();
@@ -252,9 +312,6 @@ void reset() {
 
 void mouseClicked() {
   //on mouseclick, rerun
-  for (Node n : nodes) {
-    Node newNode = n.listen();
-  }
   reset();
   println("clicked!");
   loop();
@@ -388,11 +445,11 @@ class Link {
         py2 = nodes.get(i).py;
       }
     } // for
-    stroke(0);
+    stroke(3);
     line(px1, py1, px2, py2);
 
-    fill(0);
-    textAlign(CENTER, CENTER);
-    text(name, ((px1+px2)/2)-25, ((py1+py2)/2)-12);
+    //fill(0);
+    //textAlign(CENTER, CENTER);
+    //text(name, ((px1+px2)/2)-25, ((py1+py2)/2)-12);
   } // draw method
 } // class 
