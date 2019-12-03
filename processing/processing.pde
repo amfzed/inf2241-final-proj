@@ -39,6 +39,23 @@ Node wallbroad;
 Node swilliamalley;
 Node swilliammill;
 Node beaverswilliam;
+Node williamxchange;
+Node wallwilliam;
+Node wallhanover;
+Node xchangehanover;
+Node statebridge;
+Node statepearl;
+Node bwaybridge;
+Node whitehallpearl;
+Node wallpearl;
+Node beaverhanover;
+Node hanoverpearl;
+Node williampearl;
+Node williamstone;
+Node pearlcoenties;
+Node stonecoenties;
+Node broadpearl;
+Node millstone;
 
 // start and endpoints
 Node start;
@@ -114,6 +131,23 @@ void setup() {
   Node swilliamalley = new Node("S.William/Coenties", 840, 445);
   Node swilliammill = new Node("S.William/Mill", 895, 409);
   Node beaverswilliam = new Node("Beaver/S.William", 923, 356);
+  Node williamxchange = new Node("William/Exchange", 935, 280);
+  Node wallwilliam = new Node("William/Wall", 968, 208);
+  Node wallhanover = new Node("Hanover/Wall", 1034, 256);
+  Node xchangehanover = new Node("Hanover/Exchange", 1011, 309);
+  Node statebridge = new Node("State/Bridge", 514, 547);
+  Node statepearl = new Node("State/Pearl", 507, 604);
+  Node bwaybridge = new Node("Broadway/Bridge", 632, 553);
+  Node whitehallpearl = new Node("Whitehall/Pearl", 642, 605);
+  Node wallpearl = new Node("Wall/Pearl", 1115, 312);
+  Node beaverhanover = new Node("Beaver/Hanover", 1012, 342);
+  Node hanoverpearl = new Node("Hanover/Pearl", 1023, 395);
+  Node williampearl = new Node("William/Pearl", 970, 434);
+  Node williamstone = new Node("William/Stone", 948, 408);
+  Node pearlcoenties = new Node("Pearl/Coenties", 862, 538);
+  Node stonecoenties = new Node("Stone/Coenties", 857, 484);
+  Node broadpearl = new Node("Broad/Pearl", 773, 564);
+  Node millstone = new Node("Mill/Stone", 915, 431);
 
   // street nodes
   nodes.add(bwaystate);
@@ -136,6 +170,23 @@ void setup() {
   nodes.add(swilliamalley);
   nodes.add(swilliammill);
   nodes.add(beaverswilliam);
+  nodes.add(williamxchange);
+  nodes.add(wallwilliam);
+  nodes.add(wallhanover);
+  nodes.add(xchangehanover);
+  nodes.add(statebridge);
+  nodes.add(statepearl);
+  nodes.add(bwaybridge);
+  nodes.add(whitehallpearl);
+  nodes.add(wallpearl);
+  nodes.add(beaverhanover);
+  nodes.add(hanoverpearl);
+  nodes.add(williampearl);
+  nodes.add(williamstone);
+  nodes.add(pearlcoenties);
+  nodes.add(stonecoenties);
+  nodes.add(broadpearl);
+  nodes.add(millstone);
 
   //add neighbors
   linkNodes(bwaystate, bwayfork);
@@ -164,9 +215,44 @@ void setup() {
   linkNodes(wallbroad, broadxchange);
   linkNodes(swilliamalley, swilliammill);
   linkNodes(swilliammill, beaverswilliam);
+  linkNodes(bwaystate, statebridge);
+  linkNodes(statebridge, statepearl);
+  linkNodes(bwaystate, bwaybeaver);
+  linkNodes(bwaystone, bwaybridge);
+  linkNodes(bwaybridge, whitehallpearl);
+  linkNodes(statebridge, bwaybridge);
+  linkNodes(statepearl, whitehallpearl);
+  linkNodes(broadxchange, williamxchange);
+  linkNodes(beaverswilliam, williamxchange);
+  linkNodes(williamxchange, wallwilliam);
+  linkNodes(wallwilliam, wallbroad);
+  linkNodes(wallwilliam, wallhanover);
+  linkNodes(xchangehanover, wallhanover);
+  linkNodes(williamxchange, xchangehanover);
+  linkNodes(wallhanover, wallpearl);
+  linkNodes(xchangehanover, beaverhanover);
+  linkNodes(beaverswilliam, beaverhanover);
+  linkNodes(beaverhanover, wallpearl);
+  linkNodes(hanoverpearl, wallpearl);
+  linkNodes(williamstone, beaverswilliam);
+  linkNodes(williamstone, williampearl);
+  linkNodes(williamstone, hanoverpearl);
+  linkNodes(williampearl, hanoverpearl);
+  linkNodes(beaverhanover, hanoverpearl);
+  linkNodes(williampearl, pearlcoenties);
+  linkNodes(swilliamalley, stonecoenties);
+  linkNodes(stonecoenties, pearlcoenties);
+  linkNodes(pearlcoenties, broadpearl);
+  linkNodes(broadpearl, whitehallpearl);
+  linkNodes(broadpearl, bwaybridge);
+  linkNodes(stonebroad, broadpearl);
+  linkNodes(swilliammill, millstone);
+  linkNodes(millstone, williamstone);
+  linkNodes(millstone, stonecoenties);
+  
 
   start = bwayfork;
-  end = newwall;
+  end = wallpearl;
 
   openSet.add(start);
 }
@@ -206,7 +292,7 @@ void serialEvent(Serial myPort) {
 }
 
 void draw() {
-  delay(750);
+  delay(1000);
   background(bg);
   //draw links and nodes
   for (Link l : links) {
@@ -215,6 +301,13 @@ void draw() {
   for (Node n : nodes) {
     n.draw();
   }
+
+  // display the weights
+  textSize(18);
+  fill(50);
+  text(int(wt1), 50, 80);
+  text(int(wt2), 50, 120);
+  text(int(wt3), 50, 160);
 
   //the astar magic
   if (openSet.size() == 0) {
@@ -244,9 +337,7 @@ void draw() {
       openSet.remove(current);
       closedSet.add(current);
 
-      println(current.neighbors);
       for (Node neighbor : current.neighbors) {
-        println(neighbor.name);
         if (!closedSet.contains(neighbor)) {
           // MODIFY THIS FOR THE PROJECT
           float tempG = current.g + heuristic(neighbor, current);
@@ -305,7 +396,7 @@ void reset() {
     //n.rerollVal();
   }
 
- // start = nodes.get(int(random(nodes.size())));
+  // start = nodes.get(int(random(nodes.size())));
   println(start.name);
   openSet.add(start);
 }
@@ -327,7 +418,7 @@ class Node {
   ArrayList<Node> neighbors;
   Node parent;
   int maxVal = 400;
-  int maxRand = 200;
+  int maxRand = 400;
 
   float heuristic = 0;
   float g = 0;
