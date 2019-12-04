@@ -333,7 +333,7 @@ void draw() {
       }
       println(" All done");
       textSize(32);
-      fill(255, 150, 150);
+      fill(50, 50, 50);
       text("Destination reached", 500, 950);
     } else {
       // if you're not done yet
@@ -396,7 +396,7 @@ void reset() {
 
   for (Node n : nodes) {
     n.resetVars();
-    //n.rerollVal();
+    n.rerollVal();
   }
 
   // start = nodes.get(int(random(nodes.size())));
@@ -498,7 +498,7 @@ class Node {
   }
 
   void rerollVal() {
-    val = random(0, maxVal);
+    rand = random(0, maxRand);
   }
 
   void resetVars() {
